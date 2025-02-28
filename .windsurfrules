@@ -1,0 +1,22 @@
+The following frameworks and libraries are used:
+
+- react 19
+- tailwind 4
+- shadcn/ui
+- reactflow
+- lucide icons
+
+Follow the following conventions:
+
+- when defining top level function, never use arrow functions
+- when generating types, never use interfaces, unless not otherwise possible
+
+Follow these conventions when creating React components:
+
+- always use named imports from the react package
+- always use normal functions for react components, instead of arrow functions
+- always use "on" for callback functions (e.g. `onClick`, `onItemChange`, etc)
+- always wrap `useCallback` around the callback function
+- always create a `type {ComponentName}Props = { ... }` type.
+- don't use forward ref, but set react as a prop, since we're using react 19
+- use tailwind classes, potentially using the `cn` utility when using logic or extending classNames
