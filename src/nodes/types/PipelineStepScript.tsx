@@ -87,13 +87,13 @@ export const pipelineStepScript = {
       },
     },
     {
-      type: 'string',
+      type: 'key-value',
       dataType: 'String',
       name: 'variables',
       displayName: 'Variables',
-      info: 'Define the variables for the pipe',
+      info: 'Define the variables for the pipe as key-value pairs',
       hasHandle: false,
-      defaultValue: '',
+      defaultValue: {},
       condition: {
         type: 'pipe',
       },

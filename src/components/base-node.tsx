@@ -16,7 +16,7 @@ export function BaseNode({
     <div
       ref={ref}
       className={cn(
-        'relative w-80 rounded-sWm border border-white/15 bg-neutral-900/70 backdrop-blur-sm text-card-foreground text-xs',
+        'relative w-80 rounded-sm border border-white/15 bg-neutral-900/70 backdrop-blur-sm text-card-foreground text-xs',
         'shadow-[0_0_15px_rgba(255,255,255,0.01)] transition-all duration-150',
         className,
         selected
