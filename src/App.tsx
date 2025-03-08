@@ -36,8 +36,8 @@ export default function App() {
       zoomOnScroll={false}
       // snapToGrid
       snapGrid={[20, 20]}
-      maxZoom={2}
-      minZoom={1}
+      maxZoom={4}
+      minZoom={0.2}
     >
       <Background gap={20} offset={20} />
       <Controls />

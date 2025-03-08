@@ -8,3 +8,4 @@ export * from './SelectInput';
 export * from './SwitchInput';
 export * from './DefaultInput';
 export * from './KeyValueInput';
+export * from './NumberInput';

@@ -9,11 +9,11 @@ import {
   SwitchInput,
   DefaultInput,
   KeyValueInput,
-  type BaseInputProps,
+  NumberInput,
 } from './inputs';
 
 type NodeInputItemProps = Omit<NodeItemProps, 'type' | 'id'> &
-  InputData & {
+  InputData<string> & {
     value?: unknown;
     onChange?: (name: string, value: unknown) => void;
   };
@@ -52,6 +52,16 @@ export function NodeInputItem({
     switch (type) {
       case 'string':
         return <StringInput {...commonProps} />;
+      case 'float':
+      case 'int':
+        return (
+          <NumberInput
+            {...commonProps}
+            min={options?.min}
+            max={options?.max}
+            step={options?.step}
+          />
+        );
       case 'slider':
         return <SliderInput {...commonProps} options={options} />;
       case 'select':

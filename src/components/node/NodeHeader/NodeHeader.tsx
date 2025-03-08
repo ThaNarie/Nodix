@@ -34,7 +34,7 @@ function NodeHeader({
       <div className="flex items-center gap-2">
         <div
           className={cn(
-            'w-8 h-8 p-1.5 rounded-md flex-shrink-0 bg-muted',
+            'w-8 h-8 p-1.5 rounded-sm flex-shrink-0 bg-muted',
             iconColorClass,
           )}
         >

@@ -184,7 +184,7 @@ export function KeyValueInput({
           type="button"
           size="icon"
           variant="ghost"
-          className="size-5"
+          className="size-7 cursor-pointer hover:bg-green-950/80 hover:text-green-500"
           onClick={onAddKeyValuePair}
           disabled={isDisabled}
         >
@@ -228,7 +228,7 @@ export function KeyValueInput({
                   type="button"
                   size="icon"
                   variant="ghost"
-                  className="size-7"
+                  className="size-7 cursor-pointer hover:bg-red-950/80 hover:text-red-500"
                   onClick={() => onRemoveKeyValuePair(pair.id)}
                   disabled={isDisabled}
                 >

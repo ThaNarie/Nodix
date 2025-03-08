@@ -7,6 +7,7 @@ import { textInput } from './types/TextInput';
 import { openAi } from './types/OpenAi';
 import { forwardMessage } from './types/ForwardMessage';
 import { pipelineStepScript } from './types/PipelineStepScript';
+import { inputTestNode } from './types/InputTestNode';
 
 export const initialNodes: AppNode[] = [
   {
@@ -80,6 +81,13 @@ export const initialNodes: AppNode[] = [
         variables: 'env',
       },
     },
+    dragHandle: '.dragHandle',
+  },
+  {
+    id: 'input-test',
+    type: 'flow',
+    position: { x: 0, y: 1200 },
+    data: inputTestNode,
     dragHandle: '.dragHandle',
   },
 ];

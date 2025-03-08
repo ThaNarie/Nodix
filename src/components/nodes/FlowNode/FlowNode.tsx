@@ -22,12 +22,13 @@ type InputType =
   | 'int'
   | 'float'
   | 'boolean'
-  | 'object'
-  | 'array'
-  | 'select'
+  // | 'object'
+  // | 'array'
+  | 'select' // also allow multi-select
   | 'switch'
   | 'slider'
-  | 'key-value';
+  | 'list' // list of input fields (is this 'array' ?)
+  | 'key-value'; // is this 'object' ?
 
 type DataType =
   | 'String'
