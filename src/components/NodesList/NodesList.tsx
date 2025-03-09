@@ -1,13 +1,7 @@
-import { useCallback, useState, useRef } from 'react';
-import { type FlowNodeData } from '../../components/nodes/FlowNode/FlowNode';
-import { cn } from '../../lib/utils';
+import { useCallback, useState } from 'react';
 import { Button } from '../ui/button';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import {
-  CatalogNodeData,
-  NodeCategory,
-  nodeCategories,
-} from '../../nodes/nodeCatalog';
+import { CatalogNodeData, nodeCategories } from '../../nodes/nodeCatalog';
 import { NodeListItem } from './NodeListItem';
 
 type NodesListProps = {

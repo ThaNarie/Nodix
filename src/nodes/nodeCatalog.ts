@@ -68,7 +68,7 @@ export const nodeCatalog: Record<string, CatalogNodeData> = {
   },
   'pipeline-step-script': {
     nodeData: pipelineStepScript,
-    category: 'pipeline'
+    category: 'bitbucket'
   },
   'input-test': {
     nodeData: inputTestNode,

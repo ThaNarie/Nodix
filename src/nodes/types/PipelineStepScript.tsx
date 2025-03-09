@@ -1,11 +1,11 @@
-import Atlassian from '../../components/icons/Atlassian';
+import { Terminal } from 'lucide-react';
 import type { FlowNodeData } from '../../components/nodes/FlowNode/FlowNode';
 
 export const pipelineStepScript = {
-  title: 'Pipeline Step Script',
-  description: `A script inside a step that executes`,
-  icon: <Atlassian />,
-  iconColorClass: 'bg-[#2681FF]',
+  title: 'Bitbucket Step Script',
+  description: 'A script inside a Bitbucket Pipeline step that executes commands',
+  icon: <Terminal width="100%" height="100%" />,
+  iconColorClass: 'bg-blue-500',
   inputs: [
     {
       type: 'none',

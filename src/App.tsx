@@ -13,20 +13,31 @@ import {
 import { initialNodes, nodeTypes } from './nodes';
 import { initialEdges, edgeTypes } from './edges';
 import { NodesList } from './components/NodesList';
+import { NodePicker } from './components/NodePicker';
 import { nodeCatalog, generateNodeId } from './nodes/nodeCatalog';
+import { useNodePicker } from './hooks/useNodePicker';
 
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const reactFlowInstance = useReactFlow();
-  
+
+  // Use the node picker hook
+  const {
+    nodePickerPosition,
+    connectionNodeId,
+    handleNodeSelection,
+    onConnectEnd,
+    closeNodePicker,
+  } = useNodePicker({ setNodes, setEdges });
+
   const onConnect: OnConnect = useCallback(
     (connection) => setEdges((edges) => addEdge(connection, edges)),
     [setEdges],
   );
 
   const handleAddNode = useCallback(
-    (nodeType: string, position?: { x: number, y: number }) => {
+    (nodeType: string, position?: { x: number; y: number }) => {
       const catalogNode = nodeCatalog[nodeType];
       if (!catalogNode) return;
 
@@ -57,7 +68,7 @@ export default function App() {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, setNodes],
   );
 
   // Handle drag over event to allow dropping
@@ -77,14 +88,14 @@ export default function App() {
 
       // Get the current viewport information
       const { x: vpX, y: vpY, zoom } = reactFlowInstance.getViewport();
-      
+
       // Get the position where the node was dropped
       const reactFlowBounds = event.currentTarget.getBoundingClientRect();
-      
+
       // Calculate the drop coordinates in flow space using viewport pan and zoom
       // This is an alternative to using screenToFlowPosition that seems more accurate
       // at different zoom levels
-      
+
       // Calculate the drop position (already centered because we centered the drag preview)
       const dropPosition = {
         x: (event.clientX - reactFlowBounds.left - vpX) / zoom,
@@ -94,34 +105,51 @@ export default function App() {
       // Create the node at the drop position
       handleAddNode(nodeType, dropPosition);
     },
-    [reactFlowInstance, handleAddNode]
+    [reactFlowInstance, handleAddNode],
   );
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden">
-      <NodesList nodes={nodeCatalog} onNodeAdd={handleAddNode} />
-      
-      <div className="flex-1 h-full" onDragOver={onDragOver} onDrop={onDrop}>
-        <ReactFlow
-          nodes={nodes}
-          nodeTypes={nodeTypes}
-          onNodesChange={onNodesChange}
-          edges={edges}
-          edgeTypes={edgeTypes}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          colorMode="dark"
-          fitView
-          panOnScroll
-          zoomOnScroll={false}
-          snapGrid={[20, 20]}
-          maxZoom={4}
-          minZoom={0.2}
-        >
-          <Background gap={20} offset={20} />
-          <Controls />
-        </ReactFlow>
+    <>
+      <div className="flex h-screen w-screen overflow-hidden">
+        <NodesList nodes={nodeCatalog} onNodeAdd={handleAddNode} />
+
+        <div className="flex-1 h-full" onDragOver={onDragOver} onDrop={onDrop}>
+          <ReactFlow
+            nodes={nodes}
+            nodeTypes={nodeTypes}
+            onNodesChange={onNodesChange}
+            edges={edges}
+            edgeTypes={edgeTypes}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            colorMode="dark"
+            fitView
+            panOnScroll
+            zoomOnScroll={false}
+            snapGrid={[20, 20]}
+            maxZoom={4}
+            minZoom={0.2}
+            onConnectEnd={onConnectEnd}
+          >
+            <Background gap={20} offset={20} />
+            <Controls />
+          </ReactFlow>
+
+          {/* We need to render the NodePicker outside the ReactFlow component 
+            to avoid any z-index or stacking context issues */}
+        </div>
       </div>
-    </div>
+
+      {/* Node picker rendered at the root level to ensure it's above everything */}
+      {nodePickerPosition && (
+        <NodePicker
+          nodes={nodeCatalog}
+          position={nodePickerPosition}
+          connectionNodeId={connectionNodeId}
+          onSelectNode={handleNodeSelection}
+          onClose={closeNodePicker}
+        />
+      )}
+    </>
   );
 }
