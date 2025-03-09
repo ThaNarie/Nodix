@@ -26,25 +26,31 @@ export default function App() {
   );
 
   const handleAddNode = useCallback(
-    (nodeType: string) => {
+    (nodeType: string, position?: { x: number, y: number }) => {
       const catalogNode = nodeCatalog[nodeType];
       if (!catalogNode) return;
 
-      // Get the viewport center position
-      const { x, y, zoom } = reactFlowInstance.getViewport();
-      const center = reactFlowInstance.screenToFlowPosition({
-        x: window.innerWidth / 2,
-        y: window.innerHeight / 2,
-      });
+      let nodePosition;
+      if (position) {
+        // Use the provided position (from a drop event)
+        nodePosition = position;
+      } else {
+        // Default to viewport center position if no position provided
+        const center = reactFlowInstance.screenToFlowPosition({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        });
+        nodePosition = {
+          x: center.x,
+          y: center.y,
+        };
+      }
 
       // Create a new node
       const newNode = {
         id: generateNodeId(nodeType),
         type: 'flow',
-        position: {
-          x: center.x,
-          y: center.y,
-        },
+        position: nodePosition,
         data: catalogNode.nodeData,
         dragHandle: '.dragHandle',
       };
@@ -54,11 +60,48 @@ export default function App() {
     [reactFlowInstance, setNodes]
   );
 
+  // Handle drag over event to allow dropping
+  const onDragOver = useCallback((event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  // Handle drop event to create a node at the drop position
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+
+      // Get the node type from the drag event
+      const nodeType = event.dataTransfer.getData('application/reactflow');
+      if (!nodeType) return;
+
+      // Get the current viewport information
+      const { x: vpX, y: vpY, zoom } = reactFlowInstance.getViewport();
+      
+      // Get the position where the node was dropped
+      const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+      
+      // Calculate the drop coordinates in flow space using viewport pan and zoom
+      // This is an alternative to using screenToFlowPosition that seems more accurate
+      // at different zoom levels
+      
+      // Calculate the drop position (already centered because we centered the drag preview)
+      const dropPosition = {
+        x: (event.clientX - reactFlowBounds.left - vpX) / zoom,
+        y: (event.clientY - reactFlowBounds.top - vpY) / zoom,
+      };
+
+      // Create the node at the drop position
+      handleAddNode(nodeType, dropPosition);
+    },
+    [reactFlowInstance, handleAddNode]
+  );
+
   return (
     <div className="flex h-screen w-screen overflow-hidden">
       <NodesList nodes={nodeCatalog} onNodeAdd={handleAddNode} />
       
-      <div className="flex-1 h-full">
+      <div className="flex-1 h-full" onDragOver={onDragOver} onDrop={onDrop}>
         <ReactFlow
           nodes={nodes}
           nodeTypes={nodeTypes}
