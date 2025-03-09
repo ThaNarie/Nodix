@@ -93,6 +93,16 @@ export const inputTestNode = {
       },
     },
 
+    // List input
+    {
+      type: 'list',
+      name: 'listInput',
+      displayName: 'List Input',
+      info: 'A dynamic list of string values',
+      hasHandle: false,
+      defaultValue: ['item1', 'item2', 'item3'],
+    },
+
     // None type (for handle-only inputs)
     {
       type: 'none',
@@ -126,6 +136,12 @@ export const inputTestNode = {
       displayName: 'Object Output',
       dataType: 'Structure',
       info: 'Outputs the key-value input as an object',
+    },
+    {
+      name: 'arrayOutput',
+      displayName: 'Array Output',
+      dataType: 'Collection',
+      info: 'Outputs the list input as an array of strings',
     },
   ],
 } satisfies FlowNodeData;

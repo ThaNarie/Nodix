@@ -10,6 +10,7 @@ import {
   DefaultInput,
   KeyValueInput,
   NumberInput,
+  ListInput,
 } from './inputs';
 
 type NodeInputItemProps = Omit<NodeItemProps, 'type' | 'id'> &
@@ -72,6 +73,8 @@ export function NodeInputItem({
         return <SwitchInput {...commonProps} />;
       case 'key-value':
         return <KeyValueInput {...commonProps} />;
+      case 'list':
+        return <ListInput {...commonProps} />;
       case 'none':
         return (
           <DefaultInput

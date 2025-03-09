@@ -9,3 +9,4 @@ export * from './SwitchInput';
 export * from './DefaultInput';
 export * from './KeyValueInput';
 export * from './NumberInput';
+export * from './ListInput';

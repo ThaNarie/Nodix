@@ -19,6 +19,7 @@ import { dump as yamlDump } from 'js-yaml';
 type InputType =
   | 'none'
   | 'string'
+  | 'textarea' // multiline, autogrow, max lines
   | 'int'
   | 'float'
   | 'boolean'
@@ -50,7 +51,7 @@ export type InputData<T extends string> = {
   dataType?: DataType;
   isRequired?: boolean;
   hasHandle?: boolean;
-  defaultValue?: boolean | number | string | Record<string, unknown>;
+  defaultValue?: boolean | number | string | Record<string, unknown> | string[];
   options?: {
     min?: number;
     max?: number;
