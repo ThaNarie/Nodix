@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { CatalogNodeData, nodeCategories } from '../../nodes/nodeCatalog';
 
 export function useNodeInteractions(
@@ -50,6 +50,70 @@ export function useNodeInteractions(
   return {
     handleNodeClick,
     handleDragStart,
+  };
+}
+
+export function useNodeSearch(nodes: Record<string, CatalogNodeData>) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const inputRef = useCallback((inputElement: HTMLInputElement | null) => {
+    if (inputElement) {
+      // Store the ref in a variable that persists between renders
+      searchInputRef.current = inputElement;
+    }
+  }, []);
+
+  // Use a ref to keep track of the search input element
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+  const onSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    },
+    [],
+  );
+
+  // Handle keyboard shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only trigger if we're not already focused on an input
+      if (
+        e.key === '/' &&
+        document.activeElement?.tagName !== 'INPUT' &&
+        document.activeElement?.tagName !== 'TEXTAREA'
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  // Filter nodes based on search term
+  const filteredNodes = useMemo(() => {
+    if (searchTerm.trim() === '') return nodes;
+
+    const searchLower = searchTerm.toLowerCase();
+    return Object.fromEntries(
+      Object.entries(nodes).filter(
+        ([nodeType, node]) =>
+          nodeType.toLowerCase().includes(searchLower) ||
+          node.nodeData.title.toLowerCase().includes(searchLower) ||
+          node.nodeData.description?.toLowerCase().includes(searchLower) ||
+          false,
+      ),
+    );
+  }, [nodes, searchTerm]);
+
+  return {
+    searchTerm,
+    setSearchTerm,
+    onSearchChange,
+    filteredNodes,
+    inputRef,
   };
 }
 
