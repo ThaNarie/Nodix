@@ -12,7 +12,7 @@ import {
 
 import { initialNodes, nodeTypes } from './nodes';
 import { initialEdges, edgeTypes } from './edges';
-import { NodesList } from './components/NodesList';
+import { Sidebar } from './components/Sidebar';
 import { NodePicker } from './components/NodePicker';
 import { nodeCatalog, generateNodeId } from './nodes/nodeCatalog';
 import { useNodePicker } from './hooks/useNodePicker';
@@ -111,7 +111,7 @@ export default function App() {
   return (
     <>
       <div className="flex h-screen w-screen overflow-hidden">
-        <NodesList nodes={nodeCatalog} onNodeAdd={handleAddNode} />
+        <Sidebar nodes={nodeCatalog} onNodeAdd={handleAddNode} />
 
         <div className="flex-1 h-full" onDragOver={onDragOver} onDrop={onDrop}>
           <ReactFlow

@@ -24,7 +24,7 @@ function NodeListItemNaive({
   return (
     <div
       ref={nodeRef}
-      className="p-2 rounded-md bg-zinc-800 hover:bg-zinc-700 cursor-pointer transition-colors"
+      className="p-2 rounded-md bg-zinc-800/70 hover:bg-zinc-700/70 cursor-pointer transition-colors"
       onClick={() => onClick(nodeType)}
       draggable
       onDragStart={(e) => {
@@ -37,17 +37,19 @@ function NodeListItemNaive({
         {node.nodeData.icon && (
           <div
             className={cn(
-              'min-w-6 min-h-6 w-6 h-6 flex items-center justify-center rounded',
+              'min-w-6 min-h-6 size-6 flex items-center justify-center rounded',
               node.nodeData.iconColorClass || 'bg-blue-500',
             )}
           >
-            <div className="w-4 h-4">{node.nodeData.icon}</div>
+            <div className="size-4">{node.nodeData.icon}</div>
           </div>
         )}
         <div className="overflow-hidden">
-          <div className="font-medium truncate">{node.nodeData.title}</div>
+          <div className=" text-sm truncate text-white/80">
+            {node.nodeData.title}
+          </div>
           {node.nodeData.description && (
-            <div className="text-xs text-white/70 line-clamp-1">
+            <div className="text-xs text-white/50 line-clamp-1">
               {node.nodeData.description}
             </div>
           )}
