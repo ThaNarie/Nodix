@@ -1,75 +1,33 @@
 import { useCallback } from 'react';
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  addEdge,
-  useNodesState,
-  useEdgesState,
-  type OnConnect,
-  useReactFlow,
-} from '@xyflow/react';
+import { ReactFlow, Background, Controls, useReactFlow } from '@xyflow/react';
 
-import { initialNodes, nodeTypes } from './nodes';
-import { initialEdges, edgeTypes } from './edges';
+import { nodeTypes } from './nodes';
+import { edgeTypes } from './edges';
 import { Sidebar } from './components/Sidebar';
 import { NodePicker } from './components/NodePicker';
-import { nodeCatalog, generateNodeId } from './nodes/nodeCatalog';
-import { useNodePicker } from './hooks/useNodePicker';
+import { nodeCatalog } from './nodes/nodeCatalog';
+import { useNodeStore } from './store/useNodeStore';
+import { useNodeFlow } from './hooks/useNodeFlow';
 
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const reactFlowInstance = useReactFlow();
-
-  // Use the node picker hook
   const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    onConnectEnd,
+    closeNodePicker,
+  } = useNodeStore();
+
+  const {
+    handleAddNode,
     nodePickerPosition,
     connectionNodeId,
     handleNodeSelection,
-    onConnectEnd,
-    closeNodePicker,
-  } = useNodePicker({ setNodes, setEdges });
+  } = useNodeFlow();
 
-  const onConnect: OnConnect = useCallback(
-    (connection) => setEdges((edges) => addEdge(connection, edges)),
-    [setEdges],
-  );
-
-  const handleAddNode = useCallback(
-    (nodeType: string, position?: { x: number; y: number }) => {
-      const catalogNode = nodeCatalog[nodeType];
-      if (!catalogNode) return;
-
-      let nodePosition;
-      if (position) {
-        // Use the provided position (from a drop event)
-        nodePosition = position;
-      } else {
-        // Default to viewport center position if no position provided
-        const center = reactFlowInstance.screenToFlowPosition({
-          x: window.innerWidth / 2,
-          y: window.innerHeight / 2,
-        });
-        nodePosition = {
-          x: center.x,
-          y: center.y,
-        };
-      }
-
-      // Create a new node
-      const newNode = {
-        id: generateNodeId(nodeType),
-        type: 'flow',
-        position: nodePosition,
-        data: catalogNode.nodeData,
-        dragHandle: '.dragHandle',
-      };
-
-      setNodes((nds) => nds.concat(newNode));
-    },
-    [reactFlowInstance, setNodes],
-  );
+  const reactFlowInstance = useReactFlow();
 
   // Handle drag over event to allow dropping
   const onDragOver = useCallback((event: React.DragEvent) => {

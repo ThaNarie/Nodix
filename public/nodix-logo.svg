@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+  <!-- Background with rounded corners -->
+  <rect width="24" height="24" rx="6" ry="6" fill="white" />
+  
+  <!-- Main circular nodes -->
+  <circle cx="6" cy="6" r="2.5" fill="black" stroke="none" />
+  <circle cx="18" cy="6" r="2.5" fill="black" stroke="none" />
+  <circle cx="6" cy="18" r="2.5" fill="black" stroke="none" />
+  <circle cx="18" cy="18" r="2.5" fill="black" stroke="none" />
+
+  <!-- Center node -->
+  <circle cx="12" cy="12" r="3" fill="black" stroke="none" />
+
+  <!-- Connection lines -->
+  <path d="M8 6L10 12" stroke="black" strokeWidth="1.5" />
+  <path d="M16 6L14 12" stroke="black" strokeWidth="1.5" />
+  <path d="M8 18L10 12" stroke="black" strokeWidth="1.5" />
+  <path d="M16 18L14 12" stroke="black" strokeWidth="1.5" />
+</svg>
