@@ -56,7 +56,7 @@ export function Combobox({
       <PopoverContent className="w-[278px] p-0">
         <Command>
           <CommandInput placeholder={`Search ${placeholder ?? ''}...`} />
-          <CommandList>
+          <CommandList className="nowheel">
             <CommandEmpty>No framework found.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (

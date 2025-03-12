@@ -1,5 +1,6 @@
 import { FlowNodeData } from '../components/nodes/FlowNode/FlowNode';
 import { textInput } from './types/TextInput';
+import { textAreaInput } from './types/TextAreaInput';
 import { openAi } from './types/OpenAi';
 import { forwardMessage } from './types/ForwardMessage';
 import { pipelineStepScript } from './types/PipelineStepScript';
@@ -56,6 +57,10 @@ export type CatalogNodeData = {
 export const nodeCatalog: Record<string, CatalogNodeData> = {
   'text-input': {
     nodeData: textInput,
+    category: 'input-output'
+  },
+  'text-area-input': {
+    nodeData: textAreaInput,
     category: 'input-output'
   },
   'open-ai': {

@@ -22,7 +22,7 @@ export function SelectInput({
 }: SelectInputProps) {
   // State for select value
   const [selectValue, setSelectValue] = useState<string>(
-    ((value !== undefined ? value : defaultValue) as string) ?? ''
+    ((value !== undefined ? value : defaultValue) as string) ?? '',
   );
 
   // Handle select change
@@ -31,7 +31,7 @@ export function SelectInput({
       setSelectValue(value);
       onChange?.(name, value);
     },
-    [name, onChange]
+    [name, onChange],
   );
 
   // Update local state when external value changes

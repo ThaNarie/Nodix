@@ -86,7 +86,7 @@ export const initialNodes: AppNode[] = [
   {
     id: 'input-test',
     type: 'flow',
-    position: { x: 0, y: 1200 },
+    position: { x: -800, y: 400 },
     data: inputTestNode,
     dragHandle: '.dragHandle',
   },

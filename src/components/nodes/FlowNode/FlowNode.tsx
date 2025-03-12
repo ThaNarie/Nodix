@@ -19,7 +19,7 @@ import { dump as yamlDump } from 'js-yaml';
 type InputType =
   | 'none'
   | 'string'
-  | 'textarea' // multiline, autogrow, max lines
+  | 'textarea'
   | 'int'
   | 'float'
   | 'boolean'
@@ -58,6 +58,8 @@ export type InputData<T extends string> = {
     step?: number;
     trackGradient?: string;
     selectOptions?: Array<{ label: string; value: string }>;
+    minRows?: number;
+    maxRows?: number;
   };
   condition?: Record<T, unknown>;
 };

@@ -12,6 +12,7 @@ import {
   NumberInput,
   ListInput,
 } from './inputs';
+import { TextAreaInput } from './inputs/TextAreaInput';
 
 type NodeInputItemProps = Omit<NodeItemProps, 'type' | 'id'> &
   InputData<string> & {
@@ -53,6 +54,8 @@ export function NodeInputItem({
     switch (type) {
       case 'string':
         return <StringInput {...commonProps} />;
+      case 'textarea':
+        return <TextAreaInput {...commonProps} />;
       case 'float':
       case 'int':
         return (
