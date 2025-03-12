@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   Command,
   CommandInput,
@@ -7,8 +7,9 @@ import {
   CommandEmpty,
   CommandItem,
 } from '../ui/command';
-import { CatalogNodeData, nodeCategories } from '../../nodes/nodeCatalog';
+import { CatalogNodeData } from '../../nodes/nodeCatalog';
 import { NodePickerItem } from './NodePickerItem';
+import { useNodePickerPosition, useNodeFiltering } from './NodePicker.hooks';
 
 type NodePickerProps = {
   nodes: Record<string, CatalogNodeData>;
@@ -26,7 +27,9 @@ function NodePicker({
   onSelectNode,
   onClose,
 }: NodePickerProps) {
-  const [search, setSearch] = useState('');
+  // Use custom hooks for positioning and filtering
+  const { style, isVisible } = useNodePickerPosition(position);
+  const { search, setSearch, nodesByCategory } = useNodeFiltering(nodes);
 
   const handleNodeSelect = useCallback(
     (nodeType: string) => {
@@ -38,55 +41,7 @@ function NodePicker({
     [position, onSelectNode, onClose],
   );
 
-  // Filter nodes based on search
-  const filteredNodes = Object.entries(nodes)
-    .filter(([nodeType, node]) => {
-      // Always include all nodes when search is empty
-      if (!search.trim()) return true;
-
-      const searchLower = search.toLowerCase().trim();
-      const typeMatch = nodeType.toLowerCase().includes(searchLower);
-      const titleMatch = node.nodeData.title
-        .toLowerCase()
-        .includes(searchLower);
-      const descMatch =
-        node.nodeData.description?.toLowerCase().includes(searchLower) || false;
-      const categoryMatch =
-        nodeCategories
-          .find((cat) => cat.id === node.category)
-          ?.name.toLowerCase()
-          .includes(searchLower) || false;
-
-      return typeMatch || titleMatch || descMatch || categoryMatch;
-    })
-    .map(([nodeType, node]) => ({ nodeType, node }));
-
-  // Organize filtered nodes by category
-  const nodesByCategory = nodeCategories
-    .map((category) => {
-      const categoryNodes = filteredNodes.filter(
-        ({ node }) => node.category === category.id,
-      );
-
-      return {
-        category,
-        nodes: categoryNodes,
-      };
-    })
-    .filter((category) => category.nodes.length > 0);
-
-  if (!position) return null;
-
-  // Position the picker near where the edge was dropped
-  // Anchor from the top-left with a slight offset
-  const style = {
-    position: 'absolute' as const,
-    left: `${position.x - 32}px`, // Offset by half the width to the left
-    top: `${position.y - 40}px`, // Offset up to show below the cursor
-    zIndex: 9999, // Very high z-index to ensure it's above everything
-    maxHeight: '400px',
-    transformOrigin: 'top', // Ensure it transforms from the top
-  };
+  if (!isVisible || !style) return null;
 
   return (
     <div
