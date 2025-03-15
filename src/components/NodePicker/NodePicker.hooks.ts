@@ -1,11 +1,16 @@
-import { useState, useMemo } from 'react';
 import { CatalogNodeData, nodeCategories } from '../../nodes/nodeCatalog';
+import { useState, useMemo, useCallback } from 'react';
+import { useReactFlow } from '@xyflow/react';
+import { useNodeStore } from '../../store/useNodeStore';
+import type { DataType } from '../nodes/FlowNode/FlowNode';
 
 /**
  * Hook for calculating safe node picker positioning that ensures
  * the picker stays within the viewport boundaries
  */
-function useNodePickerPosition(position: { x: number; y: number } | null) {
+export function useNodePickerPosition(
+  position: { x: number; y: number } | null,
+) {
   // Constants for the NodePicker dimensions
   const pickerWidth = 512; // w-128 is 32rem = 512px
   const pickerHeight = 400; // maxHeight: '400px'
@@ -59,33 +64,68 @@ function useNodePickerPosition(position: { x: number; y: number } | null) {
   return { style, isVisible: !!position };
 }
 
+type FilterOptions = {
+  handleType: 'source' | 'target' | null;
+  dataType: DataType | null;
+};
+
 /**
- * Hook for filtering and categorizing nodes based on search
+ * Hook for filtering and categorizing nodes based on search and connection context
  */
-function useNodeFiltering(nodes: Record<string, CatalogNodeData>) {
+export function useNodeFiltering(nodes: Record<string, CatalogNodeData>) {
   const [search, setSearch] = useState('');
+  const { connectionContext } = useNodeStore();
+
+  // Extract filter options from connection context
+  const filterOptions = useMemo((): FilterOptions => {
+    return {
+      handleType: connectionContext.handleType as 'source' | 'target' | null,
+      dataType: connectionContext.dataType,
+    };
+  }, [connectionContext]);
 
   const { nodesByCategory, filteredNodes } = useMemo(() => {
-    // Filter nodes based on search
+    // Filter nodes based on search and connection compatibility
     const filtered = Object.entries(nodes)
       .filter(([nodeType, node]) => {
-        // Always include all nodes when search is empty
-        if (!search.trim()) return true;
-
-        const searchLower = search.toLowerCase().trim();
-        const typeMatch = nodeType.toLowerCase().includes(searchLower);
-        const titleMatch = node.nodeData.title
-          .toLowerCase()
-          .includes(searchLower);
-        const descMatch =
-          node.nodeData.description?.toLowerCase().includes(searchLower) || false;
-        const categoryMatch =
+        // Apply text search filter
+        const isMatchingSearch =
+          !search.trim() ||
+          nodeType.toLowerCase().includes(search.toLowerCase().trim()) ||
+          node.nodeData.title
+            .toLowerCase()
+            .includes(search.toLowerCase().trim()) ||
+          node.nodeData.description
+            ?.toLowerCase()
+            .includes(search.toLowerCase().trim()) ||
+          false ||
           nodeCategories
             .find((cat) => cat.id === node.category)
             ?.name.toLowerCase()
-            .includes(searchLower) || false;
+            .includes(search.toLowerCase().trim()) ||
+          false;
 
-        return typeMatch || titleMatch || descMatch || categoryMatch;
+        // If no connection context, only apply text search
+        if (!filterOptions.handleType || !filterOptions.dataType) {
+          return isMatchingSearch;
+        }
+
+        // Apply data type compatibility filtering based on handle type
+        if (filterOptions.handleType === 'source') {
+          // We're connecting from an output, so we need to filter nodes with compatible inputs
+          const hasCompatibleInput = node.nodeData.inputs?.some(
+            (input) =>
+              input.hasHandle !== false &&
+              input.dataType === filterOptions.dataType,
+          );
+          return isMatchingSearch && hasCompatibleInput;
+        } else {
+          // We're connecting from an input, so we need to filter nodes with compatible outputs
+          const hasCompatibleOutput = node.nodeData.outputs?.some(
+            (output) => output.dataType === filterOptions.dataType,
+          );
+          return isMatchingSearch && hasCompatibleOutput;
+        }
       })
       .map(([nodeType, node]) => ({ nodeType, node }));
 
@@ -107,7 +147,7 @@ function useNodeFiltering(nodes: Record<string, CatalogNodeData>) {
       filteredNodes: filtered,
       nodesByCategory: byCategory,
     };
-  }, [nodes, search]);
+  }, [nodes, search, filterOptions]);
 
   return {
     search,
@@ -115,7 +155,38 @@ function useNodeFiltering(nodes: Record<string, CatalogNodeData>) {
     nodesByCategory,
     filteredNodes,
     hasResults: nodesByCategory.length > 0,
+    filterOptions,
   };
 }
 
-export { useNodePickerPosition, useNodeFiltering };
+type NodePosition = {
+  x: number;
+  y: number;
+};
+
+export function useNodePicker() {
+  const reactFlowInstance = useReactFlow();
+  const {
+    handleNodeSelection: storeHandleNodeSelection,
+    nodePickerPosition,
+    closeNodePicker,
+    connectionContext,
+  } = useNodeStore();
+
+  // Handle node selection from the NodePicker with coordinate conversion
+  const handleNodeSelection = useCallback(
+    (nodeType: string, position: NodePosition) => {
+      // Convert the screen coordinates to flow coordinates
+      const flowPosition = reactFlowInstance.screenToFlowPosition(position);
+      storeHandleNodeSelection(nodeType, flowPosition);
+    },
+    [reactFlowInstance, storeHandleNodeSelection],
+  );
+
+  return {
+    handleNodeSelection,
+    nodePickerPosition,
+    closeNodePicker,
+    connectionContext,
+  };
+}

@@ -20,3 +20,7 @@ Follow these conventions when creating React components:
 - always create a `type {ComponentName}Props = { ... }` type.
 - don't use forward ref, but set react as a prop, since we're using react 19
 - use tailwind classes, potentially using the `cn` utility when using logic or extending classNames
+
+# Component logic and Hooks
+
+- when adding logic to a component, if it extends more than a few lines, create a hook in `ComponentName.hooks.ts`

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import {
   Command,
   CommandInput,
@@ -6,40 +6,56 @@ import {
   CommandList,
   CommandEmpty,
   CommandItem,
+  CommandDialog,
 } from '../ui/command';
-import { CatalogNodeData } from '../../nodes/nodeCatalog';
+import { nodeCatalog } from '../../nodes/nodeCatalog';
 import { NodePickerItem } from './NodePickerItem';
-import { useNodePickerPosition, useNodeFiltering } from './NodePicker.hooks';
+import {
+  useNodePickerPosition,
+  useNodeFiltering,
+  useNodePicker,
+} from './NodePicker.hooks';
 
-type NodePickerProps = {
-  nodes: Record<string, CatalogNodeData>;
-  position: { x: number; y: number } | null;
-  connectionNodeId: string | null;
-  onSelectNode: (nodeType: string, position: { x: number; y: number }) => void;
-  onClose: () => void;
-};
+function NodePicker() {
+  const {
+    nodePickerPosition: position,
+    handleNodeSelection,
+    closeNodePicker,
+  } = useNodePicker();
 
-function NodePicker({
-  nodes,
-  position,
-  // TODO; use for filtering
-  //connectionNodeId,
-  onSelectNode,
-  onClose,
-}: NodePickerProps) {
   // Use custom hooks for positioning and filtering
   const { style, isVisible } = useNodePickerPosition(position);
-  const { search, setSearch, nodesByCategory } = useNodeFiltering(nodes);
+  const { search, setSearch, nodesByCategory } = useNodeFiltering(nodeCatalog);
 
   const handleNodeSelect = useCallback(
     (nodeType: string) => {
       if (position) {
-        onSelectNode(nodeType, position);
-        onClose();
+        handleNodeSelection(nodeType, position);
+        closeNodePicker();
       }
     },
-    [position, onSelectNode, onClose],
+    [position, handleNodeSelection, closeNodePicker],
   );
+
+  // Close node picker on escape key
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isVisible) {
+        closeNodePicker();
+      }
+    },
+    [closeNodePicker, isVisible],
+  );
+
+  // Add event listener for escape key
+  useEffect(() => {
+    if (isVisible) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isVisible, handleKeyDown]);
 
   if (!isVisible || !style) return null;
 
@@ -47,7 +63,7 @@ function NodePicker({
     <div
       className="fixed inset-0 bg-black/50" // Increased opacity for better visibility
       style={{ zIndex: 9000 }} // Ensure the backdrop is also above react-flow elements
-      onClick={onClose}
+      onClick={closeNodePicker}
     >
       <div
         style={style}

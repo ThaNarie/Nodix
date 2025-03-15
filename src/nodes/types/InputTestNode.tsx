@@ -103,7 +103,7 @@ export const inputTestNode = {
       name: 'keyValueInput',
       displayName: 'Key-Value Input',
       info: 'A dynamic list of key-value pairs',
-      hasHandle: false,
+      dataType: 'Data',
       defaultValue: {
         key1: 'value1',
         key2: 'value2',
@@ -116,7 +116,7 @@ export const inputTestNode = {
       name: 'listInput',
       displayName: 'List Input',
       info: 'A dynamic list of string values',
-      hasHandle: false,
+      dataType: 'Collection',
       defaultValue: ['item1', 'item2', 'item3'],
     },
 
@@ -150,13 +150,19 @@ export const inputTestNode = {
     },
     {
       name: 'objectOutput',
-      displayName: 'Object Output',
+      displayName: 'Object Output (Structure)',
       dataType: 'Structure',
       info: 'Outputs the key-value input as an object',
     },
     {
+      name: 'dataOutput',
+      displayName: 'Object Output (Data)',
+      dataType: 'Data',
+      info: 'Outputs the key-value input as a data object',
+    },
+    {
       name: 'arrayOutput',
-      displayName: 'Array Output',
+      displayName: 'Array Output (Collection)',
       dataType: 'Collection',
       info: 'Outputs the list input as an array of strings',
     },

@@ -1,13 +1,14 @@
+import { ReactFlow, Background, Controls } from '@xyflow/react';
 import { useCallback } from 'react';
-import { ReactFlow, Background, Controls, useReactFlow } from '@xyflow/react';
 
 import { nodeTypes } from './nodes';
 import { edgeTypes } from './edges';
 import { Sidebar } from './components/Sidebar';
 import { NodePicker } from './components/NodePicker';
-import { nodeCatalog } from './nodes/nodeCatalog';
 import { useNodeStore } from './store/useNodeStore';
-import { useNodeFlow } from './hooks/useNodeFlow';
+import { useCanvasInteractions } from './hooks/useCanvasInteractions';
+import { useAddNode } from './hooks/useAddNode';
+import { nodeCatalog } from './nodes/nodeCatalog';
 
 export default function App() {
   const {
@@ -17,61 +18,29 @@ export default function App() {
     onEdgesChange,
     onConnect,
     onConnectEnd,
-    closeNodePicker,
   } = useNodeStore();
 
-  const {
-    handleAddNode,
-    nodePickerPosition,
-    connectionNodeId,
-    handleNodeSelection,
-  } = useNodeFlow();
+  const { handleAddNode } = useAddNode();
+  const { onDragOver, onDrop } = useCanvasInteractions();
 
-  const reactFlowInstance = useReactFlow();
-
-  // Handle drag over event to allow dropping
-  const onDragOver = useCallback((event: React.DragEvent) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
-
-  // Handle drop event to create a node at the drop position
-  const onDrop = useCallback(
+  // Create a callback for drop that passes handleAddNode
+  const handleDrop = useCallback(
     (event: React.DragEvent) => {
-      event.preventDefault();
-
-      // Get the node type from the drag event
-      const nodeType = event.dataTransfer.getData('application/reactflow');
-      if (!nodeType) return;
-
-      // Get the current viewport information
-      const { x: vpX, y: vpY, zoom } = reactFlowInstance.getViewport();
-
-      // Get the position where the node was dropped
-      const reactFlowBounds = event.currentTarget.getBoundingClientRect();
-
-      // Calculate the drop coordinates in flow space using viewport pan and zoom
-      // This is an alternative to using screenToFlowPosition that seems more accurate
-      // at different zoom levels
-
-      // Calculate the drop position (already centered because we centered the drag preview)
-      const dropPosition = {
-        x: (event.clientX - reactFlowBounds.left - vpX) / zoom,
-        y: (event.clientY - reactFlowBounds.top - vpY) / zoom,
-      };
-
-      // Create the node at the drop position
-      handleAddNode(nodeType, dropPosition);
+      onDrop(event, handleAddNode);
     },
-    [reactFlowInstance, handleAddNode],
+    [onDrop, handleAddNode],
   );
 
   return (
     <>
       <div className="flex h-screen w-screen overflow-hidden">
-        <Sidebar nodes={nodeCatalog} onNodeAdd={handleAddNode} />
+        <Sidebar nodes={nodeCatalog} />
 
-        <div className="flex-1 h-full" onDragOver={onDragOver} onDrop={onDrop}>
+        <div
+          className="flex-1 h-full"
+          onDragOver={onDragOver}
+          onDrop={handleDrop}
+        >
           <ReactFlow
             nodes={nodes}
             nodeTypes={nodeTypes}
@@ -99,15 +68,7 @@ export default function App() {
       </div>
 
       {/* Node picker rendered at the root level to ensure it's above everything */}
-      {nodePickerPosition && (
-        <NodePicker
-          nodes={nodeCatalog}
-          position={nodePickerPosition}
-          connectionNodeId={connectionNodeId}
-          onSelectNode={handleNodeSelection}
-          onClose={closeNodePicker}
-        />
-      )}
+      <NodePicker />
     </>
   );
 }

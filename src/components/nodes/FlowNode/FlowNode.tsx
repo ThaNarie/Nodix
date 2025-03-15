@@ -31,7 +31,7 @@ type InputType =
   | 'list' // list of input fields (is this 'array' ?)
   | 'key-value'; // is this 'object' ?
 
-type DataType =
+export type DataType =
   | 'String'
   | 'Boolean'
   | 'Int'

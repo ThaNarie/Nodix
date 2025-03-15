@@ -7,20 +7,22 @@ import {
   useNodeSearch,
 } from './NodesList.hooks';
 import { Input } from '@/components/ui/input';
+import { useAddNode } from '../../hooks/useAddNode';
 
 type NodesListProps = {
   nodes: Record<string, CatalogNodeData>;
-  onNodeAdd: (nodeType: string, position?: { x: number; y: number }) => void;
 };
 
-function NodesList({ nodes, onNodeAdd }: NodesListProps) {
-  const { handleNodeClick, handleDragStart } = useNodeInteractions(onNodeAdd);
+function NodesList({ nodes }: NodesListProps) {
+  const { handleDragStart } = useNodeInteractions();
   const { searchTerm, onSearchChange, filteredNodes, inputRef } =
     useNodeSearch(nodes);
 
   // Group filtered nodes by category
   const { expandedCategories, toggleCategory, nodesByCategory } =
     useCategoryGrouping(filteredNodes);
+
+  const { handleAddNode } = useAddNode();
 
   return (
     <div className="flex flex-col h-full">
@@ -67,7 +69,7 @@ function NodesList({ nodes, onNodeAdd }: NodesListProps) {
                       key={nodeType}
                       nodeType={nodeType}
                       node={node}
-                      onClick={handleNodeClick}
+                      onClick={handleAddNode}
                       onDragStart={handleDragStart}
                     />
                   ))}

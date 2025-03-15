@@ -1,16 +1,7 @@
 import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import { CatalogNodeData, nodeCategories } from '../../nodes/nodeCatalog';
 
-export function useNodeInteractions(
-  onNodeAdd: (nodeType: string, position?: { x: number; y: number }) => void,
-) {
-  const handleNodeClick = useCallback(
-    (nodeType: string) => {
-      onNodeAdd(nodeType);
-    },
-    [onNodeAdd],
-  );
-
+export function useNodeInteractions() {
   const handleDragStart = useCallback(
     (event: React.DragEvent, nodeType: string, element: HTMLDivElement) => {
       // Store the node type in the drag data transfer object
@@ -48,7 +39,6 @@ export function useNodeInteractions(
   );
 
   return {
-    handleNodeClick,
     handleDragStart,
   };
 }
