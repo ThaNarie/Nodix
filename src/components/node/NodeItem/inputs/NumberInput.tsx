@@ -46,7 +46,7 @@ export function NumberInput({
       const newValue = sanitizedValue === '' ? '' : parseFloat(sanitizedValue);
 
       // Don't update if it's not a valid number and not empty
-      if (sanitizedValue !== '' && isNaN(newValue)) {
+      if (sanitizedValue !== '' && isNaN(Number(newValue))) {
         return;
       }
 

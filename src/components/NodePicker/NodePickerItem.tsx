@@ -7,7 +7,7 @@ type NodePickerItemProps = {
   node: CatalogNodeData;
 };
 
-function NodePickerItemNaive({ nodeType, node }: NodePickerItemProps) {
+function NodePickerItemNaive({ node }: NodePickerItemProps) {
   return (
     <div className="p-2 rounded-md cursor-pointer transition-colors w-full block">
       <div className="flex items-center gap-2 w-full min-w-0">

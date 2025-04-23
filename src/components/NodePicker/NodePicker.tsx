@@ -6,7 +6,6 @@ import {
   CommandList,
   CommandEmpty,
   CommandItem,
-  CommandDialog,
 } from '../ui/command';
 import { nodeCatalog } from '../../nodes/nodeCatalog';
 import { NodePickerItem } from './NodePickerItem';
