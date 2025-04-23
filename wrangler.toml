@@ -1,7 +1,3 @@
-# Cloudflare Pages configuration
 name = "nodix"
-compatibility_date = "2025-04-20"
-
-# Routes all requests to the static site
-[site]
-bucket = "./dist"
+compatibility_date = "2025-04-03"
+assets = { not_found_handling = "single-page-application" }
