@@ -15,6 +15,7 @@ import { Eye } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { useToggle } from '@mediamonks/react-kit';
 import { dump as yamlDump } from 'js-yaml';
+import { TooltipProvider } from '../../ui/tooltip';
 
 type InputType =
   | 'none'
@@ -114,71 +115,75 @@ export function FlowNode({
         className={cn('cursor-grab', dragHandle?.slice(1))}
       />
       <div className="flex flex-col py-4 gap-4 border-b border-white/10">
-        {inputs.length ? (
-          inputs
-            .filter((input) => {
-              // If no condition is specified, always show the input
-              if (!input.condition) return true;
+        <TooltipProvider skipDelayDuration={500} delayDuration={1000}>
+          {inputs.length ? (
+            inputs
+              .filter((input) => {
+                // If no condition is specified, always show the input
+                if (!input.condition) return true;
 
-              // Check if all conditions match the current values
-              return Object.entries(input.condition).every(([key, value]) => {
-                // Get the current value for the input with this name
-                const currentValue = values[key];
+                // Check if all conditions match the current values
+                return Object.entries(input.condition).every(([key, value]) => {
+                  // Get the current value for the input with this name
+                  const currentValue = values[key];
 
-                // If the value doesn't exist in the values object, fall back to the default value
-                if (currentValue === undefined) {
-                  const targetInput = inputs.find(
-                    (input) => input.name === key,
-                  );
-                  if (!targetInput) return false;
-                  return targetInput.defaultValue === value;
-                }
+                  // If the value doesn't exist in the values object, fall back to the default value
+                  if (currentValue === undefined) {
+                    const targetInput = inputs.find(
+                      (input) => input.name === key,
+                    );
+                    if (!targetInput) return false;
+                    return targetInput.defaultValue === value;
+                  }
 
-                // Compare the condition value with the current value from the values object
-                return currentValue === value;
-              });
-            })
-            .map((input) => (
+                  // Compare the condition value with the current value from the values object
+                  return currentValue === value;
+                });
+              })
+              .map((input) => (
+                <NodeInputItem
+                  key={input.name}
+                  {...input}
+                  value={values[input.name]}
+                  onChange={handleInputChange}
+                />
+              ))
+          ) : (
+            <>
               <NodeInputItem
-                key={input.name}
-                {...input}
-                value={values[input.name]}
-                onChange={handleInputChange}
+                name="a"
+                displayName="Text"
+                type="string"
+                dataType="String"
               />
-            ))
-        ) : (
-          <>
-            <NodeInputItem
-              name="a"
-              displayName="Text"
-              type="string"
-              dataType="String"
-            />
-            <NodeInputItem
-              name="b"
-              displayName="Something else"
-              type="string"
-              dataType="String"
-            />
-          </>
-        )}
+              <NodeInputItem
+                name="b"
+                displayName="Something else"
+                type="string"
+                dataType="String"
+              />
+            </>
+          )}
+        </TooltipProvider>
       </div>
       <div className="flex flex-col gap-1">
-        {outputs.length ? (
-          outputs.map((output, index) => (
-            <NodeOutputItem
-              key={output.name}
-              id={output.name}
-              {...output}
-              isLast={index === outputs.length - 1}
-            />
-          ))
-        ) : (
-          <>
-            <NodeOutputItem id="c" displayName="Message" />
-            <NodeOutputItem id="d" displayName="Data" isLast />
-          </>
-        )}
+        <TooltipProvider skipDelayDuration={500} delayDuration={1000}>
+          {outputs.length ? (
+            outputs.map((output, index) => (
+              <NodeOutputItem
+                key={output.name}
+                id={output.name}
+                {...output}
+                isLast={index === outputs.length - 1}
+              />
+            ))
+          ) : (
+            <>
+              <NodeOutputItem id="c" displayName="Message" />
+              <NodeOutputItem id="d" displayName="Data" isLast />
+            </>
+          )}
+        </TooltipProvider>
       </div>
 
       {/* JSON data viewer */}

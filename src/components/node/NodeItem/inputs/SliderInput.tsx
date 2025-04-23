@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Input } from '../../../ui/input';
 import { Slider } from '../../../ui/slider';
 import { useSliderWithInput } from '../../../../hooks/useSliderWithInput';
-import { LabelWrapper } from './LabelWrapper';
-import { InputWrapper } from './InputWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
+import { InputWrapper } from './components/InputWrapper';
 import { type BaseInputProps } from './types';
 
 type SliderInputProps = BaseInputProps & {
@@ -27,7 +27,8 @@ export function SliderInput({
   options,
 }: SliderInputProps) {
   // Use the slider hook
-  const initialValue = ((value !== undefined ? value : defaultValue) as number) ?? 0;
+  const initialValue =
+    ((value !== undefined ? value : defaultValue) as number) ?? 0;
   const {
     sliderValue,
     inputValue,

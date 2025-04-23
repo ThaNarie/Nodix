@@ -2,8 +2,8 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { Plus, X, Lock } from 'lucide-react';
 import { Input } from '../../../ui/input';
 import { Button } from '../../../ui/button';
-import { LabelWrapper } from './LabelWrapper';
-import { InputWrapper } from './InputWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
+import { InputWrapper } from './components/InputWrapper';
 import { type BaseInputProps } from './types';
 import { isEqual } from 'es-toolkit';
 
@@ -30,33 +30,24 @@ export function ListInput({
   onChange,
 }: ListInputProps) {
   // Ref to store the previous external value for comparison
-  const prevExternalValueRef = useRef<string[]>(
-    (value as string[]) || [],
-  );
+  const prevExternalValueRef = useRef<string[]>((value as string[]) || []);
 
   // State for internal list items with stable IDs
-  const [internalItems, setInternalItems] = useState<InternalListItem[]>(
-    () => {
-      const initialValue = value !== undefined ? value : defaultValue;
+  const [internalItems, setInternalItems] = useState<InternalListItem[]>(() => {
+    const initialValue = value !== undefined ? value : defaultValue;
 
-      // Convert array to array of items with IDs
-      if (Array.isArray(initialValue)) {
-        return initialValue.map(
-          (item) => ({ id: generateId(), value: item }),
-        );
-      }
+    // Convert array to array of items with IDs
+    if (Array.isArray(initialValue)) {
+      return initialValue.map((item) => ({ id: generateId(), value: item }));
+    }
 
-      // Always start with at least one empty item
-      return [{ id: generateId(), value: '' }];
-    },
-  );
+    // Always start with at least one empty item
+    return [{ id: generateId(), value: '' }];
+  });
 
   // Handle adding a new list item
   const onAddListItem = useCallback(() => {
-    setInternalItems((prev) => [
-      ...prev,
-      { id: generateId(), value: '' },
-    ]);
+    setInternalItems((prev) => [...prev, { id: generateId(), value: '' }]);
   }, []);
 
   // Handle removing a list item
@@ -74,16 +65,13 @@ export function ListInput({
   }, []);
 
   // Handle value change
-  const onItemChange = useCallback(
-    (id: string, newValue: string) => {
-      setInternalItems((prev) => {
-        return prev.map((item) =>
-          item.id === id ? { ...item, value: newValue } : item,
-        );
-      });
-    },
-    [],
-  );
+  const onItemChange = useCallback((id: string, newValue: string) => {
+    setInternalItems((prev) => {
+      return prev.map((item) =>
+        item.id === id ? { ...item, value: newValue } : item,
+      );
+    });
+  }, []);
 
   // Convert internal items to external array format and notify parent
   useEffect(() => {
@@ -119,7 +107,7 @@ export function ListInput({
     setInternalItems((prev) => {
       // Create a map of existing items by their value for quick lookups
       const existingItemsByValue = new Map<string, InternalListItem>();
-      prev.forEach(item => {
+      prev.forEach((item) => {
         if (item.value) {
           existingItemsByValue.set(item.value, item);
         }
@@ -127,12 +115,12 @@ export function ListInput({
 
       // Create a new array of items based on the external values
       const updatedItems: InternalListItem[] = [];
-      
+
       // Track which values we've processed
       const processedValues = new Set<string>();
 
       // First, add all non-empty items from the previous state that still exist in the external data
-      prev.forEach(item => {
+      prev.forEach((item) => {
         if (item.value && value.includes(item.value)) {
           updatedItems.push(item);
           processedValues.add(item.value);
@@ -143,11 +131,11 @@ export function ListInput({
       });
 
       // Then add any new values from the external data
-      value.forEach(val => {
+      value.forEach((val) => {
         if (!processedValues.has(val)) {
           updatedItems.push({
             id: generateId(),
-            value: val
+            value: val,
           });
         }
       });
@@ -184,9 +172,7 @@ export function ListInput({
                 placeholder={isDisabled ? 'Disabled' : 'Value'}
                 disabled={isDisabled}
                 value={item.value}
-                onChange={(e) =>
-                  onItemChange(item.id, e.target.value)
-                }
+                onChange={(e) => onItemChange(item.id, e.target.value)}
                 endContent={
                   isDisabled && <Lock size={16} className="text-white/15" />
                 }

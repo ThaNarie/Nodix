@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Lock } from 'lucide-react';
 import { Input } from '../../../ui/input';
-import { LabelWrapper } from './LabelWrapper';
-import { InputWrapper } from './InputWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
+import { InputWrapper } from './components/InputWrapper';
 import { type BaseInputProps } from './types';
 
 // String input component
@@ -18,7 +18,7 @@ export function StringInput({
 }: BaseInputProps) {
   // State for string input
   const [stringValue, setStringValue] = useState<string>(
-    ((value !== undefined ? value : defaultValue) as string) ?? ''
+    ((value !== undefined ? value : defaultValue) as string) ?? '',
   );
 
   // Handle string input change
@@ -27,7 +27,7 @@ export function StringInput({
       setStringValue(e.target.value);
       onChange?.(name, e.target.value);
     },
-    [name, onChange]
+    [name, onChange],
   );
 
   // Update local state when external value changes
@@ -48,7 +48,9 @@ export function StringInput({
           disabled={isDisabled}
           value={stringValue}
           onChange={onStringChange}
-          endContent={isDisabled && <Lock size={16} className="text-white/15" />}
+          endContent={
+            isDisabled && <Lock size={16} className="text-white/15" />
+          }
           inputClassName="text-xs"
         />
       </InputWrapper>

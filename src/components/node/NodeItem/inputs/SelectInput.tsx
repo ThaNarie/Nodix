@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Combobox } from '../../../ui/combobox';
-import { LabelWrapper } from './LabelWrapper';
-import { InputWrapper } from './InputWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
+import { InputWrapper } from './components/InputWrapper';
 import { type BaseInputProps } from './types';
 
 type SelectInputProps = BaseInputProps & {

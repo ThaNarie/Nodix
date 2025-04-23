@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Lock, Plus, Minus } from 'lucide-react';
 import { Input } from '../../../ui/input';
-import { LabelWrapper } from './LabelWrapper';
-import { InputWrapper } from './InputWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
+import { InputWrapper } from './components/InputWrapper';
 import { type BaseInputProps } from './types';
 import { cn } from '@/lib/utils';
 import { Button } from '../../../ui/button';

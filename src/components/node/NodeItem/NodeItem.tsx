@@ -2,13 +2,17 @@ import { Position } from '@xyflow/react';
 import type { PropsWithChildren, ReactNode } from 'react';
 import { BaseHandle } from '../../base-handle';
 import { cn } from '../../../lib/utils';
-import { OpenAI } from '../../icons/OpenAI';
+import { HandleTooltip } from './inputs/components/HandleTooltip';
+import { type DataType } from '@/components/nodes/FlowNode/FlowNode';
 
 export type NodeItemProps = PropsWithChildren<{
   id: string;
   type: 'input' | 'output';
   className?: string;
   hideHandle?: boolean;
+  dataType?: DataType;
+  description?: string;
+  schema?: string;
 }>;
 
 export function NodeItem({
@@ -17,6 +21,9 @@ export function NodeItem({
   children,
   className,
   hideHandle,
+  dataType,
+  description,
+  schema,
 }: NodeItemProps): ReactNode {
   return (
     <div
@@ -30,11 +37,18 @@ export function NodeItem({
       )}
     >
       {!hideHandle && (
-        <BaseHandle
-          id={id}
-          type={type === 'input' ? 'target' : 'source'}
-          position={type === 'input' ? Position.Left : Position.Right}
-        />
+        <HandleTooltip
+          dataType={dataType}
+          description={description}
+          schema={schema}
+          type={type}
+        >
+          <BaseHandle
+            id={id}
+            type={type === 'input' ? 'target' : 'source'}
+            position={type === 'input' ? Position.Left : Position.Right}
+          />
+        </HandleTooltip>
       )}
       {children}
     </div>

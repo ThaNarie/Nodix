@@ -1,8 +1,8 @@
 import { useCallback, useState, useEffect } from 'react';
 import { Lock } from 'lucide-react';
 import { Textarea } from '../../../ui/textarea';
-import { LabelWrapper } from './LabelWrapper';
-import { InputWrapper } from './InputWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
+import { InputWrapper } from './components/InputWrapper';
 import { type BaseInputProps } from './types';
 
 type TextAreaInputProps = BaseInputProps & {

@@ -1,9 +1,12 @@
 import { Position } from '@xyflow/react';
 import { BaseHandle } from '../../../base-handle';
-import { LabelWrapper } from './LabelWrapper';
+import { LabelWrapper } from './components/LabelWrapper';
 import { type BaseInputProps } from './types';
 
-type DefaultInputProps = Pick<BaseInputProps, 'name' | 'displayName' | 'hasHandle'>;
+type DefaultInputProps = Pick<
+  BaseInputProps,
+  'name' | 'displayName' | 'hasHandle'
+>;
 
 // Default case component (just handle and label)
 export function DefaultInput({
