@@ -1,10 +1,7 @@
 # Cloudflare Pages configuration
 name = "nodix"
 compatibility_date = "2025-04-20"
-compatibility_flags = ["nodejs_compat"]
 
+# Routes all requests to the static site
 [site]
 bucket = "./dist"
-
-[build]
-command = "npm run build"
